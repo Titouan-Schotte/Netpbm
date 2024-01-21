@@ -45,7 +45,7 @@ func BinaryToWindows1252(binaryArray []int) (string, error) {
 	// Allow to convert binary to windows 1252 string
 	// Check that the length of the binary array is a multiple of 8
 	if len(binaryArray)%8 != 0 {
-		return "", fmt.Errorf("la longueur du tableau binaire doit être un multiple de 8")
+		return "", fmt.Errorf("ERROR : The length of the binary array must be a multiple of 8")
 	}
 
 	// Convert binary sequence to a byte array

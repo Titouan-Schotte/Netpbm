@@ -19,7 +19,7 @@ func ReadPPM(filename string) (*PPM, error) {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("Erreur à l'ouverture du fichier:", err)
+		fmt.Println("ERROR : Can't open file:", err)
 		return nil, err
 	}
 
@@ -37,21 +37,21 @@ func ReadPPM(filename string) (*PPM, error) {
 		if i == 0 { //We are currently reading the magic number
 			ppmIn.magicNumber = line
 			if ppmIn.magicNumber != "P3" && ppmIn.magicNumber != "P6" {
-				return nil, fmt.Errorf("Format non pris en charge")
+				return nil, fmt.Errorf("ERROR : file format is not PPM format")
 			}
 		}
 		if i == 1 { //We are currently reading height & width
 			size := strings.Fields(scanner.Text())
 			if len(size) != 2 {
-				return nil, fmt.Errorf("Taille du format invalide")
+				return nil, fmt.Errorf("ERROR : File lenght not valid")
 			}
 			ppmIn.width, err = strconv.Atoi(size[0])
 			if err != nil {
-				return nil, fmt.Errorf("largeur invalide")
+				return nil, fmt.Errorf("ERROR : Width not valid")
 			}
 			ppmIn.height, err = strconv.Atoi(size[1])
 			if err != nil {
-				return nil, fmt.Errorf("hauteur invalide")
+				return nil, fmt.Errorf("ERROR : Height not valid")
 			}
 
 			// Initialize the data matrix
@@ -64,7 +64,7 @@ func ReadPPM(filename string) (*PPM, error) {
 			// Read max value allowed
 			maxValue, err := strconv.Atoi(line)
 			if err != nil {
-				return nil, fmt.Errorf("valeur maximale invalide")
+				return nil, fmt.Errorf("ERROR : Max value not valid")
 			}
 			ppmIn.max = uint8(maxValue)
 		}
@@ -74,13 +74,13 @@ func ReadPPM(filename string) (*PPM, error) {
 				lineData := strings.Fields(line)
 				pixelCount := len(lineData)
 				if pixelCount%3 != 0 || pixelCount/3 != ppmIn.width {
-					return nil, fmt.Errorf("Largeur de la ligne du body invalide")
+					return nil, fmt.Errorf("ERROR : width of the body line not valid")
 				}
 				for j := 0; j < ppmIn.width; j++ {
 					for k := 0; k < 3; k++ {
 						val, err := strconv.Atoi(lineData[j*3+k])
 						if err != nil {
-							return nil, fmt.Errorf("Valeur de pixel invalide")
+							return nil, fmt.Errorf("ERROR : pixel value not valid")
 						}
 						switch k {
 						case 0:
@@ -113,7 +113,7 @@ func ReadPPM(filename string) (*PPM, error) {
 					}
 				}
 			} else {
-				return nil, fmt.Errorf("Magic Number invalide") // On créé une erreur
+				return nil, fmt.Errorf("ERROR : magic number unknown") // On créé une erreur
 			}
 
 		}

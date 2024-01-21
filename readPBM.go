@@ -20,7 +20,7 @@ func ReadPBM(filename string) (*PBM, error) {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		fmt.Println("Erreur à l'ouverture du fichier:", err)
+		fmt.Println("ERROR : Can't open file:", err)
 		return nil, err
 	}
 
@@ -36,19 +36,22 @@ func ReadPBM(filename string) (*PBM, error) {
 		}
 		if i == 0 { //We are currently reading the magic number
 			pbmIn.magicNumber = line
+			if pbmIn.magicNumber != "P1" && pbmIn.magicNumber != "P4" {
+				return nil, fmt.Errorf("ERROR : file format is not PBM format")
+			}
 		}
 		if i == 1 { //We are currently reading height & width
 			size := strings.Fields(scanner.Text())
 			if len(size) != 2 {
-				return nil, fmt.Errorf("Taille du format invalide") //On créé une erreur
+				return nil, fmt.Errorf("ERROR : File lenght not valid")
 			}
 			pbmIn.width, err = strconv.Atoi(size[0])
 			if err != nil {
-				return nil, fmt.Errorf("longueur invalide") //On créé une erreur
+				return nil, fmt.Errorf("ERROR : Width not valid")
 			}
 			pbmIn.height, err = strconv.Atoi(size[1])
 			if err != nil {
-				return nil, fmt.Errorf("hauteur invalide") //On créé une erreur
+				return nil, fmt.Errorf("ERROR : Height not valid")
 			}
 
 			if pbmIn.magicNumber == "P1" {
@@ -66,12 +69,12 @@ func ReadPBM(filename string) (*PBM, error) {
 
 				lineData := strings.Fields(line)
 				if len(lineData) != pbmIn.width {
-					return nil, fmt.Errorf("Largeur de la ligne du body invalide") // On créé une erreur
+					return nil, fmt.Errorf("ERROR : width of the body line not valid") // On créé une erreur
 				}
 				for j, pixel := range lineData {
 					val, err := strconv.Atoi(pixel)
 					if err != nil {
-						return nil, fmt.Errorf("Valeur de pixel invalide") // On créé une erreur
+						return nil, fmt.Errorf("ERROR : pixel value not valid") // On créé une erreur
 					}
 					pbmIn.data[i-2][j] = val == 1
 				}
@@ -100,7 +103,7 @@ func ReadPBM(filename string) (*PBM, error) {
 					}
 				}
 			} else {
-				return nil, fmt.Errorf("Magic Number invalide") // On créé une erreur
+				return nil, fmt.Errorf("ERROR : magic number unknown") // On créé une erreur
 			}
 		}
 		i++
