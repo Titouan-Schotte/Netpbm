@@ -1,3 +1,3 @@
-module github.com/Titouan-Schotté/Netpbm
+module github.com/Titouan-Schotte/Netpbm
 
 go 1.19
